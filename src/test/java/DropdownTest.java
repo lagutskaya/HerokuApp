@@ -3,6 +3,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -27,18 +28,17 @@ public class DropdownTest {
         SoftAssert softAssert = new SoftAssert();
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
-        WebElement dropdownWait = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("dropdown")));
-        dropdownWait.click();
+        WebElement dropdownElement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("dropdown")));
 
-        WebElement secondOption = driver.findElement(By.xpath("//*[@id='dropdown']/option[2]"));
-        secondOption.click();
-        boolean isSecondOptionSelected = secondOption.getAttribute("selected") != null;
-        softAssert.assertTrue(isSecondOptionSelected, "Значение 'Option 1' должно быть выбрано.");
+        Select dropdown = new Select(dropdownElement);
 
-        WebElement thirdOption = driver.findElement(By.xpath("//*[@id='dropdown']/option[3]"));
-        thirdOption.click();
-        boolean isThirdOptionSelected = thirdOption.getAttribute("selected") != null;
-        softAssert.assertTrue(isThirdOptionSelected, "Значение 'Option 2' должно быть выбрано.");
+        dropdown.selectByVisibleText("Option 2");
+        boolean isSecondOptionSelected = dropdown.getFirstSelectedOption().getText().equals("Option 2");
+        softAssert.assertTrue(isSecondOptionSelected, "Значение 'Option 2' должно быть выбрано.");
+
+        dropdown.selectByVisibleText("Option 1");
+        boolean isFirstOptionSelected = dropdown.getFirstSelectedOption().getText().equals("Option 1");
+        softAssert.assertTrue(isFirstOptionSelected, "Значение 'Option 1' должно быть выбрано.");
 
         softAssert.assertAll();
     }
